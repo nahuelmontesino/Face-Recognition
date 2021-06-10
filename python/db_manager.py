@@ -3,8 +3,6 @@ import os
 from pprint import pprint
 
 
-
-
 class DatabaseConnection:
     def __init__(self):
         try:
@@ -14,12 +12,6 @@ class DatabaseConnection:
             self.cursor = self.connection.cursor()
         except:
             pprint("No se pudo conectar con la base de datos")
-
-
-    def insert_new_categoria(self,categoria_name):
-        insert_command = f"INSERT INTO categoria(nombre) VALUES('{categoria_name}')" #f para insertar valores en string
-        pprint(insert_command)
-        self.cursor.execute(insert_command)
 
     def insert_new_imagenes(self,images):
         insert_command = "INSERT INTO imagen(nombre,vector) VALUES(%s,%s)"
@@ -40,9 +32,6 @@ class DatabaseConnection:
                 self.cursor.execute(insert_command) 
             except:
                 continue
-         
-         
-
 
     def close_connection(self):
         self.cursor.close()
