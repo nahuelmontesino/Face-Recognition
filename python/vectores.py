@@ -15,7 +15,10 @@ for path in image_path:
     utils.save_faces(cascade, f,path)"""
 
 
-embedding = tf.keras.models.load_model('my_model2.h5')
-path = "./Imagene"
-name, vector = utils.get_name_and_vector(path, embedding)
-print(vector[0])
+model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Codigo\my_model3.h5')
+vectors = []
+dir_path = r'C:\Users\monte\Desktop\Grupo_investigacion\Codigo\Images misma carpeta'
+for image_name in os.listdir(dir_path):
+  path = os.path.join(dir_path,image_name)
+  embedding = utils.get_vector(path, model)
+  vectors.append(embedding)

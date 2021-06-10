@@ -55,18 +55,16 @@ def save_faces(cascade, imgname, image_path):
       #print(os.path.join(newFolder,name))
 
 
-def get_name_and_vector(path, model):
-    Names = []
-    attributes = []
+def get_vector(path, model):
+    embedding = []
     
-    for f in [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]:
-        img = preprocess_image(f)
-        # convert image to numpy array
-        x = image.img_to_array(img)
-        # the image is now in an array of shape (3, 200, 200) 
-        # need to expand it to (1, 3, 200, 200) as it's expecting a list
-        x = np.expand_dims(x, axis=0)
-        # extract the features
-        Names.append(f)
-        attributes.append(model(x)[0])
-    return Names, attributes
+    img = preprocess_image(path)
+    # convert image to numpy array
+    x = image.img_to_array(img)
+    # the image is now in an array of shape (3, 200, 200) 
+    # need to expand it to (1, 3, 200, 200) as it's expecting a list
+    x = np.expand_dims(x, axis=0)
+    # extract the features
+    embedding.append(model(x)[0])
+
+    return embedding
