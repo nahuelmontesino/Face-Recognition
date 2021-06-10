@@ -13,25 +13,20 @@ class DatabaseConnection:
         except:
             pprint("No se pudo conectar con la base de datos")
 
-    def insert_new_imagenes(self,images):
+    def insert_new_image(self,image):
         insert_command = "INSERT INTO imagen(nombre,vector) VALUES(%s,%s)"
-        self.cursor.executemany(insert_command, images)  #execute many para insertar por lote, images es un arrary de imagenes
+        self.cursor.execute(insert_command, image)  #execute many para insertar por lote, images es un arrary de imagenes
     
 
     def query_all_nombres(self):
         self.cursor.execute("SELECT nombre FROM imagen;")
         nombres =[nombre[0] for nombre in  self.cursor.fetchall()]  #fetchall convierte en una lista lo que viene 
         return nombres
-        
 
-    def insert_all_name(self):
-        nombres = os.listdir(path_base)
-        for nombre in nombres:
-            try:
-                insert_command = f"INSERT INTO imagen(nombre) VALUES('{nombre}')"
-                self.cursor.execute(insert_command) 
-            except:
-                continue
+
+
+
+
 
     def close_connection(self):
         self.cursor.close()
