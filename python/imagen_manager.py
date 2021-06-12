@@ -6,25 +6,34 @@ import db_manager as dbm
 from tensorflow.python import keras
 import Rostros_utils as utils
 import tensorflow as tf
-from psycopg2.extensions import register_adapter, AsIs
 
 
-model = tf.keras.models.load_model(r'D:\UTN\5 año\Gestion Avanzada de datos\Tp-Final\Modelos\my_model3.h5')
-path_base = r'D:\UTN\5 año\Gestion Avanzada de datos\Tp-Final\Imagenes\Fotos Alumnos FRCU'
+model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Modelos\model_training_with_faces.h5')
+path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos Alumnos FRCU"
+consulta_path_base = "Path base donde se encuentran las imagenes de la tabla consulta"
 
 database = dbm.DatabaseConnection()
 
-for nombre in os.listdir(path_base)[:1]:
-    path = os.path.join(path_base, nombre)
-    embedding = utils.get_vector(path, model)
-    image = nombre,np.array(embedding).tolist()[0]
-    #print(np.array(embedding).tolist()[0])
-    database.insert_new_image(image)
+def insert_name_and_vector_from_directory(dir_path, model):
+    for nombre in os.listdir(dir_path):
+        path = os.path.join(dir_path, nombre)
+        #TODO: ANTES DE OBTENER EL VECTOR SE DEBERIA OBTENER EL ROSTRO CON utils.get_only_face()
+        try:
+            embedding = utils.get_vector(path, model)
+            "np.array(embedding).tolist()[0] permite guardarlo en la base de datos"
+            image = nombre, np.array(embedding).tolist()[0]
+            database.insert_new_image(image)
+        except:
+            continue
 
-# def addapt_numpy_array(numpy_array):
-#     return AsIs(tuple(numpy_array))
+def save_similar_faces(folder_to_save):
+    for id, name in database.get_queries():
+        path = os.path.join(consulta_path_base, name)
+        img = im.imread(path)
+        cv2.imwrite(os.path.join(folder_to_save,name, name), img)
+        for i , name in enumerate(database.get_ansquers(id)):
+            path = os.path.join(path_base_images, name)
+            img = im.imread(path)
+            cv2.imwrite(os.path.join(folder_to_save,name, name+f'similar{i}'), img)
 
-
-
-# img = im.imread(path)
-#  img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+insert_name_and_vector_from_directory(path_base_images, model)

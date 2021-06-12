@@ -13,14 +13,16 @@ def preprocess_image(filename):
     Load the specified file as a JPEG image, preprocess it and
     resize it to the target shape.
     """
+    try:
+        image_string = tf.io.read_file(filename)
+        image = tf.image.decode_jpeg(image_string, channels=3)
+        image = tf.image.convert_image_dtype(image, tf.float32)
+        image = tf.image.resize(image, target_shape)
+        return image
+    except:
+        print(f'La imagen no se pudo preprocesar {filename}')
 
-    image_string = tf.io.read_file(filename)
-    image = tf.image.decode_jpeg(image_string, channels=3)
-    image = tf.image.convert_image_dtype(image, tf.float32)
-    image = tf.image.resize(image, target_shape)
-    return image
-
-def visualize(anchor, positive, negative):
+def visualize_triplet(anchor, positive, negative):
     """Visualize a few triplets from the supplied batches."""
 
     def show(ax, image):
@@ -37,22 +39,18 @@ def visualize(anchor, positive, negative):
         show(axs[i, 2], negative[i])
 
 
-def save_faces(cascade, imgname, image_path):
-  # uses the casca Haar cascade to isolate the
-  # face from an image.
-  newFolder = "./Imagene/" 
+def save_only_face(cascade, imgname, image_path, folder_to_save):
+  """Uses the casca Haar cascade to isolate the face from an image."""
   img = cv2.imread(os.path.join(image_path, imgname))
-  celebrity = imgname
-  for i, face in enumerate(cascade.detectMultiScale(img)):
-
+  for face in enumerate(cascade.detectMultiScale(img)):
       x, y, w, h = face
       sub_face = img[y:y + h, x:x + w]
       resized_image = cv2.resize(sub_face, (224, 224))
-      name = celebrity + str(face[0]) +'.jpg'
+      return resized_image
+      """name = imgname + str(face[0]) +'.jpg'
       plt.imshow(resized_image)
-      #plt.show()
-      cv2.imwrite(os.path.join(newFolder,name), resized_image)
-      #print(os.path.join(newFolder,name))
+      plt.show()
+      cv2.imwrite(os.path.join(folder_to_save ,name), resized_image)"""
 
 
 def get_vector(path, model):
