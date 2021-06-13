@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION TopSimilars(vector_entrada float[]) 
+CREATE OR REPLACE FUNCTION TopSimilars(vector_entrada float[], limite int) 
 RETURNS table (
 	name varchar,
 	distancia float) as
@@ -9,7 +9,7 @@ Begin
 	FOR REC in 
 			(select * from Distancias(vector_entrada)
 			order by distancia desc
-			limit 10) LOOP
+			limit limite) LOOP
 		name := rec.name;
 		distancia:= rec.distancia;
 		RETURN NEXT;
@@ -18,4 +18,4 @@ End
 $$
 language 'plpgsql';
 
-select TopSimilars(array[1,2,3])
+select TopSimilars(array[1,2,3], 5)
