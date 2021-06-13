@@ -8,7 +8,7 @@
 CREATE TABLE consulta(
    id SERIAL,
    vector float[],
-   path VARCHAR(100),
+   nombre VARCHAR(100),
    respuesta_correcta int,
    
    PRIMARY KEY(id),
