@@ -9,10 +9,18 @@ class DatabaseConnection:
         self.connection.autocommit = True
         self.cursor = self.connection.cursor()
 
-    def insert_new_image(self,image):
+    def insert_new_image(self,image, is_consulta):
         """Allow to insert image name and asociated vector"""
-        insert_command = "INSERT INTO imagen(nombre,vector) VALUES(%s,%s)"
+        if is_consulta:
+            insert_command = "INSERT INTO consulta(nombre,vector) VALUES(%s,%s)"
+        else:
+            insert_command = "INSERT INTO imagen(nombre,vector) VALUES(%s,%s)"
         self.cursor.execute(insert_command, image)
+    
+    def insert_new_consulta(self,consulta):
+        """Allow to insert image name and asociated vector"""
+        insert_command = "INSERT INTO consulta(nombre, vector) VALUES(%s,%s)"
+        self.cursor.execute(insert_command, consulta)
 
     def get_queries(self):
         self.cursor.excecute("SELECT id, path from Consulta")
