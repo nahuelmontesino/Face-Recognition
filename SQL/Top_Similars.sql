@@ -8,7 +8,7 @@ rec record;
 Begin 
 	FOR REC in 
 			(select * from Distancias(vector_entrada)
-			order by distancia desc
+			order by distancia asc
 			limit limite) LOOP
 		name := rec.name;
 		distancia:= rec.distancia;
