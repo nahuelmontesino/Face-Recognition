@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION TopSimilars(vector_entrada float[], limite int) 
 RETURNS table (
+	id int,
 	name varchar,
 	distancia float) as
 $$
@@ -12,6 +13,7 @@ Begin
 			limit limite) LOOP
 		name := rec.name;
 		distancia:= rec.distancia;
+		id := rec.id;
 		RETURN NEXT;
 	END LOOP;
 End

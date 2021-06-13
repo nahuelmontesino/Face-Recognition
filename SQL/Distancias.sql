@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION Distancias(vector_entrada float[]) 
 RETURNS table (
+	id int, 
 	name varchar,
 	distancia float) as
 $$
@@ -11,11 +12,9 @@ Begin
 	FOR REC in (select nombre, vector from imagen) LOOP
 		distancia := DistanciaEuclidiana(vector_entrada, rec.vector);
 		name := rec.nombre;
+		id := rec.id;
 		RETURN NEXT;
 	END LOOP;
-	
-	--return;
---nombres;
 	
 End;
 $$
