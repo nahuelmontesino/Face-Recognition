@@ -5,7 +5,7 @@ consulta_rec record;
 rec record;
 Begin
 	for consulta_rec in (select * from consulta) LOOP
-		FOR rec in (select * from TopSimilares(consulta_rec.vector ,limite))LOOP
+		FOR rec in (select * from TopSimilars(consulta_rec.vector ,limite))LOOP
 			Insert into respuesta(consulta_id, imagen_id, distancia)
 			Values(consulta_rec.id, rec.id, rec.distancia);
 		END LOOP;
@@ -16,4 +16,4 @@ language 'plpgsql';
 								
 				
 
-select SaveTopSimilars(5)
+select Insert_top_similars(5)
