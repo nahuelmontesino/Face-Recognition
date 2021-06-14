@@ -5,8 +5,8 @@ consulta_rec record;
 rec record;
 Begin
 	for consulta_rec in (select * from consulta) LOOP
-		FOR rec in (select * from TopSimilares(consulta_rec.vector ,limite int) LOOP
-			Insert into respuesta(consulta_id, imagen_id, distancia) 
+		FOR rec in (select * from TopSimilares(consulta_rec.vector ,limite))LOOP
+			Insert into respuesta(consulta_id, imagen_id, distancia)
 			Values(consulta_rec.id, rec.id, rec.distancia);
 		END LOOP;
 	END LOOP;
