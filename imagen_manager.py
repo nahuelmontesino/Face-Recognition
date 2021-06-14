@@ -12,7 +12,7 @@ model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\
 path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos Alumnos FRCU"
 consulta_path_base = r"C:\Users\monte\Desktop\Consultas"
 
-database = dbm.DatabaseConnection()
+
 
 def load_images_into_database(dir_path, model, is_consulta=False):
     """
@@ -23,6 +23,7 @@ def load_images_into_database(dir_path, model, is_consulta=False):
     --is_consulta: especifica si las imagenes a cargar son para consulta, 
     caso contrario se agregan a la tabla imagen
     """
+    database = dbm.DatabaseConnection()
     for nombre in os.listdir(dir_path):
         path = os.path.join(dir_path, nombre)
         #TODO: ANTES DE OBTENER EL VECTOR SE DEBERIA OBTENER EL ROSTRO CON utils.get_only_face()
@@ -36,6 +37,7 @@ def load_images_into_database(dir_path, model, is_consulta=False):
 
 
 def save_similar_faces(folder_to_save):
+    database = dbm.DatabaseConnection()
     for id, name in database.get_queries():
         path = os.path.join(consulta_path_base, name)
         img = im.imread(path)
