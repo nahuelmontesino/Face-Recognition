@@ -45,6 +45,11 @@ def load_anwers_from_queries(limit):
     database.insert_anwers_from_queries(limit)
 
 def save_similar_faces(folder_to_save):
+    """
+     Obtiene respuestas de la tabla respuesta de la base de datos
+     y guarda una carpeta por consulta, en dicha carpeta estara la imagen
+     base y sus N similares
+    """
     i = 0
     database = dbm.DatabaseConnection()
     consult_name_old = ""
@@ -62,14 +67,16 @@ def save_similar_faces(folder_to_save):
         img = im.imread(path)
         cv2.imwrite(os.path.join(folder_to_save, consult_name_old.replace(".JPG", "").replace(".jpg",""), f'similar{i}.jpg'), img)
 
-#database = dbm.DatabaseConnection()
-#database.get_answers()
 
-
+"Paso 1: Cargar las imagenes en la tabla imagenes"
 #load_images_into_database(path_base_images, model)
+"Paso 2: cargar las consultas en la tabla consulta"
 #load_images_into_database(consulta_path_base, model, True)
-save_similar_faces(folder_to_save_)
+"Paso 3: Obtener las respuestas asociadas a cada consulta y guardarlas en la tabla respuesta"
+load_anwers_from_queries(10)
+"Paso 4: Guardar en una carpeta las imagenes de las consultas y sus respuestas similares"
+#save_similar_faces(folder_to_save_)
 
 
-#load_anwers_from_queries(10)
+
 
