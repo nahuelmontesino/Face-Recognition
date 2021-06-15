@@ -8,9 +8,10 @@ import Rostros_utils as utils
 import tensorflow as tf
 
 
-model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Modelos\model_training_with_faces.h5')
-path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos Alumnos FRCU"
+model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Modelos\model_trainig_with_similars.h5')
+path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Test"
 consulta_path_base = r"C:\Users\monte\Desktop\Consultas"
+folder_to_save_ = r'C:\Users\monte\Desktop\Prueva'
 
 
 
@@ -35,18 +36,40 @@ def load_images_into_database(dir_path, model, is_consulta=False):
         except:
             continue
 
+def load_anwers_from_queries(limit):
+    """
+    Recorre las consultas y obtiene las respuestas asociadas a 
+    cada una de ellas
+    """
+    database = dbm.DatabaseConnection()
+    database.insert_anwers_from_queries(limit)
 
 def save_similar_faces(folder_to_save):
+    i = 0
     database = dbm.DatabaseConnection()
-    for id, name in database.get_queries():
-        path = os.path.join(consulta_path_base, name)
-        img = im.imread(path)
-        cv2.imwrite(os.path.join(folder_to_save,name, name), img)
-        for i , name in enumerate(database.get_ansquers(id)):
-            path = os.path.join(path_base_images, name)
+    consult_name_old = ""
+    for img_name, consult_name in database.get_answers():
+        i += 1
+        if consult_name_old != consult_name:
+            consult_name_old = consult_name
+            path = os.path.join(consulta_path_base, consult_name_old)
             img = im.imread(path)
-            cv2.imwrite(os.path.join(folder_to_save,name, name+f'similar{i}'), img)
+            path_to_write = os.path.join(folder_to_save, consult_name_old.replace(".JPG", "").replace(".jpg",""), 'imagen_base.jpg')
+            cv2.imwrite(path_to_write, img)
+            
+
+        path = os.path.join(path_base_images, img_name)
+        img = im.imread(path)
+        cv2.imwrite(os.path.join(folder_to_save, consult_name_old.replace(".JPG", "").replace(".jpg",""), f'similar{i}.jpg'), img)
+
+#database = dbm.DatabaseConnection()
+#database.get_answers()
 
 
-load_images_into_database(consulta_path_base, model, True)
+#load_images_into_database(path_base_images, model)
+#load_images_into_database(consulta_path_base, model, True)
+save_similar_faces(folder_to_save_)
+
+
+#load_anwers_from_queries(10)
 

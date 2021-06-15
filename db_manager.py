@@ -22,13 +22,14 @@ class DatabaseConnection:
         insert_command = "INSERT INTO consulta(nombre, vector) VALUES(%s,%s)"
         self.cursor.execute(insert_command, consulta)
 
-    def get_queries(self):
-        self.cursor.excecute("SELECT id, path from Consulta")
-        id, path = self.cursor.fetchall()
-        return id, path
+    def get_answers(self):
+        self.cursor.callproc("Obtener_Respuestas")
+        answers = self.cursor.fetchall()
 
-    def get_ansquers(self, id):
-        """Esto deberia devolver los nombres en la columna imagen a partir del id de consulta"""
+        return answers
+
+    def insert_anwers_from_queries(self, limit):
+        self.cursor.callproc(f"insert_top_similars({limit})")
 
     def get_similars(self):
         self.cursor.execute("select")  
