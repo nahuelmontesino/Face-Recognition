@@ -23,13 +23,15 @@ class DatabaseConnection:
         self.cursor.execute(insert_command, consulta)
 
     def get_answers(self):
+        """Obtiene las respuestas asociadas a cada consulta"""
         self.cursor.callproc("Obtener_Respuestas")
         answers = self.cursor.fetchall()
 
         return answers
 
     def insert_anwers_from_queries(self, limit):
-        self.cursor.callproc(f"insert_top_similars({limit})")
+        "Agregar las limit respuestas asociadas a cada consulta"
+        self.cursor.callproc("Insert_top_similars", (limit,))
 
     def get_similars(self):
         self.cursor.execute("select")  
