@@ -1,4 +1,5 @@
 CREATE OR REPLACE FUNCTION Distancias(vector_entrada float[]) 
+--Obtiene la distancia de un vector de entrada a cada una de las imagenes en la tabla imagen
 RETURNS table (
 	id int, 
 	name varchar,
