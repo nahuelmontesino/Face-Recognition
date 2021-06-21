@@ -1,36 +1,46 @@
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
 import Rostros_utils as utils
-
-datagen = ImageDataGenerator(        
-        rotation_range = 40,
-        shear_range = 0.2,
-        zoom_range = 0.2,
-        horizontal_flip = True,
-        brightness_range = (0.5, 1.5))
 import numpy as np
 import os
 
-image_directory = r'C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos Alumnos FRCU/'
-SIZE = 180
-dataset = []
-my_images = os.listdir(image_directory)
-for i, image_name in enumerate(my_images):  
-    try:  
-        path = os.path.join(image_directory, image_name)    
-        imagen = utils.preprocess_image(path)       
-        imagen = image.img_to_array(imagen)
-        #imagen = np.expand_dims(imagen, axis=0)
-        dataset.append(imagen)
-    except:
-        continue
+datagen = ImageDataGenerator(
+    rescale = 1./255,     #Establece el valor de los pixeles en un rando de (0 a 1)
+	rotation_range=40,
+    width_shift_range=0.2,
+    height_shift_range=0.2,      
+    shear_range=0.3,  #Inclina las imagenes
+    zoom_range=0.2,  #Hace zoom a las imagenes
+    brightness_range = [0.7,1.3],       
+    horizontal_flip=True, #Invierte las imagenes
+    fill_mode='nearest')
 
-x = np.array(dataset)
-i = 0
-for batch in datagen.flow(x, batch_size=16,
-                          save_to_dir= r'C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos_aumentadas',
-                          save_prefix='dr',
-                          save_format='jpg'):    
-    i += 1    
-    if i > 50:        
-        break
+class DataAumentation:
+    def __init__(self):
+        self.datagen = datagen
+
+    def generete_aumented_images(self, input_directory, output_directory, total_images):
+        my_images = os.listdir(input_directory)
+        for i, image_name in enumerate(my_images):  
+            try:  
+                path = os.path.join(input_directory, image_name)    
+                preprocess_img = utils.preprocess_image(path)  
+                image_array = image.img_to_array(preprocess_img)
+                image_array = np.expand_dims(image_array, axis=0)
+            except:
+                continue
+            image_name = image_name.replace('.jpg','').replace('.JGP','')
+            aumented_path = os.path.join(output_directory, image_name)
+            if not os.path.exists(aumented_path):
+                os.makedirs(aumented_path)
+
+            img_gen = self.datagen.flow(image_array, batch_size=1,
+                                    save_to_dir= aumented_path,
+                                    save_prefix='image',
+                                    save_format='jpg')  
+            for e in range(total_images):
+                img_gen.next()
+    
+
+
+
