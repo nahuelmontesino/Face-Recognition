@@ -1,5 +1,4 @@
 import psycopg2
-from pprint import pprint
 
 
 class DatabaseConnection:

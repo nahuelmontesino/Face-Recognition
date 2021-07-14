@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing import image
 import cv2
 from matplotlib import pyplot as plt
 
-target_shape = (200, 200)
+target_shape = (224, 224)
 
 def preprocess_image(filename):
     """
@@ -43,14 +43,17 @@ def save_only_face(cascade, imgname, image_path, folder_to_save):
   """Uses the casca Haar cascade to isolate the face from an image."""
   img = cv2.imread(os.path.join(image_path, imgname))
   for face in enumerate(cascade.detectMultiScale(img)):
-      x, y, w, h = face
-      sub_face = img[y:y + h, x:x + w]
-      resized_image = cv2.resize(sub_face, (224, 224))
-      return resized_image
-      """name = imgname + str(face[0]) +'.jpg'
-      plt.imshow(resized_image)
-      plt.show()
-      cv2.imwrite(os.path.join(folder_to_save ,name), resized_image)"""
+      try:
+          x, y, w, h = face[1]
+          sub_face = img[y- 10 :y + h + 20, x - 10 :x + w + 20]
+          resized_image = cv2.resize(sub_face, (224, 224))
+          #return resized_image
+          name = imgname
+          #plt.imshow(resized_image)
+          #plt.show()
+          cv2.imwrite(os.path.join(folder_to_save ,name), resized_image)
+      except:
+            continue 
 
 
 def get_vector(path, model):
@@ -63,6 +66,6 @@ def get_vector(path, model):
     # need to expand it to (1, 3, 200, 200) as it's expecting a list
     x = np.expand_dims(x, axis=0)
     # extract the features
-    embedding.append(model(x)[0])
+    embedding.append(model(x, training=False)[0])
 
     return embedding

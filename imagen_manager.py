@@ -5,11 +5,9 @@ import numpy as np
 import db_manager as dbm
 import Rostros_utils as utils
 import tensorflow as tf
-import aumentation
 
-
-model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Modelos\model_trainig_with_similars_best.h5')
-path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Test"
+model = tf.keras.models.load_model(r'C:\Users\monte\Desktop\Grupo_investigacion\Modelos\model_training_vgg_face3.h5')
+path_base_images = r"C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Test_recortadas/"
 consulta_path_base = r"C:\Users\monte\Desktop\Consultas"
 folder_to_save_ = r'C:\Users\monte\Desktop\Prueva'
 image_directory = r'C:\Users\monte\Desktop\Grupo_investigacion\Datasets\Fotos Alumnos FRCU\Fotos Alumnos FRCU/'
