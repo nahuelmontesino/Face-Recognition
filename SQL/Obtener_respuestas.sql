@@ -12,4 +12,5 @@ end
 $$ 
 language 'plpgsql';
 
+
 select Obtener_Respuestas()

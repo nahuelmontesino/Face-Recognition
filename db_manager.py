@@ -4,7 +4,7 @@ import psycopg2
 class DatabaseConnection:
     def __init__(self):
         self.connection = psycopg2.connect(
-                "dbname='gad' user='postgres' host='localhost' password='admin' port='5433'")
+                "dbname='gadnormalizada' user='postgres' host='localhost' password='admin' port='5432'")
         self.connection.autocommit = True
         self.cursor = self.connection.cursor()
 
