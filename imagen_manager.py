@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 import db_manager as dbm
-import rostros_utils as utils
+from rostros_utils import get_face_crop, get_vector
 import tensorflow as tf
 from pathlib import Path
 
@@ -34,8 +34,8 @@ def load_images_into_database(dir_path, model, is_consulta=False):
 
     for image_name in os.listdir(dir_path):
         try:
-            face_crop = utils.get_face_crop(dir_path, image_name)
-            embedding = utils.get_vector(face_crop, model)
+            face_crop = get_face_crop(dir_path, image_name)
+            embedding = get_vector(face_crop, model)
             "np.array(embedding).tolist()[0] permite guardarlo en la base de datos"
             image = np.array(embedding).tolist()[0]
             database.insert_new_image((image_name, image), is_consulta)
