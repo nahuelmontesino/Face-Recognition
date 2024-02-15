@@ -1,5 +1,4 @@
 import cv2
-import imageio as im
 import os
 import numpy as np
 import db_manager as dbm
@@ -69,24 +68,24 @@ def save_similar_faces(folder_to_save):
     for img_name, consult_name, distancia in database.get_answers():
         i += 1
         if consult_name_old != consult_name:
-            if not os.path.exists(os.path.join(folder_to_save, consult_name.replace(".JPG", "").replace(".jpg","").replace(".jpeg",""))):
-                os.makedirs(os.path.join(folder_to_save, consult_name.replace(".JPG", "").replace(".jpg","").replace(".jpeg","")))
+            if not os.path.exists(os.path.join(folder_to_save, os.path.splitext(consult_name)[0])):
+                os.makedirs(os.path.join(folder_to_save, os.path.splitext(consult_name)[0]))
 
-            myfile = Path(os.path.join(folder_to_save, consult_name.replace(".JPG", "").replace(".jpg","").replace(".jpeg",""),'distancias.txt'))
+            myfile = Path(os.path.join(folder_to_save, os.path.splitext(consult_name)[0]), 'distancias.txt')
             myfile.touch(exist_ok=True)
 
             consult_name_old = consult_name
             path = os.path.join(consulta_path_base, consult_name_old)
-            img = im.imread(path)
-            path_to_write = os.path.join(folder_to_save, consult_name_old.replace(".JPG", "").replace(".jpg","").replace(".jpeg",""), 'imagen_base.jpg')
+            img = cv2.imread(path)
+            path_to_write = os.path.join(folder_to_save, os.path.splitext(consult_name)[0], 'imagen_base.jpg')
 
-            im.imwrite(path_to_write, img)
+            cv2.imwrite(path_to_write, img)
 
         path = os.path.join(path_base_images, img_name)
-        img = im.imread(path)
-        im.imwrite(os.path.join(folder_to_save, consult_name_old.replace(".JPG", "").replace(".jpg", "").replace(".jpeg", ""), f'similar{i}.jpg'), img)
+        img = cv2.imread(path)
+        cv2.imwrite(os.path.join(folder_to_save, os.path.splitext(consult_name)[0], f'similar{i}.jpg'), img)
 
-        path_file = os.path.join(folder_to_save, consult_name.replace(".JPG", "").replace(".jpg", "").replace(".jpeg", ""), 'distancias.txt')
+        path_file = os.path.join(folder_to_save, os.path.splitext(consult_name)[0], 'distancias.txt')
         myfile = open(path_file, 'a')
         myfile.write('\n' + f'similar{i}.jpg' + ' ' + str(distancia))
         myfile.close()
