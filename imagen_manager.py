@@ -97,6 +97,6 @@ load_images_into_database(prueba_normalizar, model)
 "Paso 2: cargar las consultas en la tabla consulta"
 load_images_into_database(consulta_path_base, model, True)
 "Paso 3: Obtener las respuestas asociadas a cada consulta y guardarlas en la tabla respuesta"
-load_anwers_from_queries(10)
+load_anwers_from_queries(20)
 "Paso 4: Guardar en una carpeta las imagenes de las consultas y sus respuestas similares"
 save_similar_faces(folder_to_save_)
