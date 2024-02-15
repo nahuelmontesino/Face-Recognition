@@ -5,13 +5,17 @@ import db_manager as dbm
 from rostros_utils import get_face_crop, get_vector
 import tensorflow as tf
 from pathlib import Path
+from dotenv import load_dotenv
 
+# Load env variables
+dotenv_path = Path("enviroment.env")
+load_dotenv(dotenv_path=dotenv_path)
 
 model = tf.keras.models.load_model('model/model_vgg_face.h5')
-path_base_images = "imagenes/rostros_images"
-consulta_path_base = "imagenes/consultas"
-prueba_normalizar = 'imagenes/images'
-folder_to_save_ = 'imagenes/results'
+PATH_BASE_IMAGES = os.getenv("PATH_BASE_IMAGES")
+REQUEST_IMAGES_DIR = os.getenv("REQUEST_IMAGES_DIR")
+MAIN_IMAGES_DIR = os.getenv("MAIN_IMAGES_DIR")
+OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 
 target_shape = (224, 224)
 
@@ -75,13 +79,13 @@ def save_similar_faces(folder_to_save):
             myfile.touch(exist_ok=True)
 
             consult_name_old = consult_name
-            path = os.path.join(consulta_path_base, consult_name_old)
+            path = os.path.join(REQUEST_IMAGES_DIR, consult_name_old)
             img = cv2.imread(path)
             path_to_write = os.path.join(folder_to_save, os.path.splitext(consult_name)[0], 'imagen_base.jpg')
 
             cv2.imwrite(path_to_write, img)
 
-        path = os.path.join(path_base_images, img_name)
+        path = os.path.join(PATH_BASE_IMAGES, img_name)
         img = cv2.imread(path)
         cv2.imwrite(os.path.join(folder_to_save, os.path.splitext(consult_name)[0], f'similar{i}.jpg'), img)
 
@@ -92,10 +96,10 @@ def save_similar_faces(folder_to_save):
 
 
 "Paso 1: Cargar las imagenes en la tabla imagenes"
-load_images_into_database(prueba_normalizar, model)
+load_images_into_database(MAIN_IMAGES_DIR, model)
 "Paso 2: cargar las consultas en la tabla consulta"
-load_images_into_database(consulta_path_base, model, True)
+load_images_into_database(REQUEST_IMAGES_DIR, model, True)
 "Paso 3: Obtener las respuestas asociadas a cada consulta y guardarlas en la tabla respuesta"
 load_anwers_from_queries(20)
 "Paso 4: Guardar en una carpeta las imagenes de las consultas y sus respuestas similares"
-save_similar_faces(folder_to_save_)
+save_similar_faces(OUTPUT_DIR)
