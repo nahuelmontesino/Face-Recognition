@@ -19,10 +19,10 @@ OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 target_shape = (224, 224)
 
 
-def load_images_into_database(dir_path, model, is_query=False):
+def store_images_features(dir_path, model, is_query=False):
     """
-    Loads images from a given directory into a database. The image name
-    and the feature vector are stored
+    Loads images from a given directory then save the feaures vector
+    and the image name into a database.
 
     Args:
         dir_path (str): Path to the directory containing the images to load.
@@ -45,26 +45,22 @@ def load_images_into_database(dir_path, model, is_query=False):
             print("Ocurrió una excepción:", e)
 
 
-def load_anwers_from_queries(limit):
-    """
-    Iterate over the queries table and get the most similar faces asociated
-    to every query and insert it into a response table. The number of similar
-    faces that are stored is based on the "limit" number
-
-    Args:
-        limit: answer number for every query
-    """
-    database = dbm.DatabaseConnection()
-    database.insert_anwers_from_queries(limit)
-
-
-def save_similar_faces(folder_to_save):
+def save_similar_faces_by_query(folder_to_save, query_dir, anwers_limit):
     """
     Get responses from the database response table and saves a 
-    folder per query, in this folder will be the base image and its similar N
+    folder per query, in this folder will be the base face and its similar N
+
+    Args:
+        folder_to_save: folder where the similarities faces are stored
+        query_dir: directory where the image to query are stored
+        answers_limit: answer number for every query
     """
     i = 0
     database = dbm.DatabaseConnection()
+
+    store_images_features(query_dir, model, is_query=True)
+    database.insert_anwers_from_queries(anwers_limit)
+
     consult_name_old = ""
     for img_name, consult_name, distancia in database.get_answers():
         i += 1
@@ -93,10 +89,6 @@ def save_similar_faces(folder_to_save):
 
 
 "Step 1: load the images into the images table"
-load_images_into_database(MAIN_IMAGES_DIR, model)
-"Step 2: cload the queries into the query table"
-load_images_into_database(REQUEST_IMAGES_DIR, model, True)
-"Step 3: get the answers related to every query and save it in the response table"
-load_anwers_from_queries(20)
-"Step 4: save in the output folder the images from the queries and their answers"
-save_similar_faces(OUTPUT_DIR)
+store_images_features(MAIN_IMAGES_DIR, model)
+"Step 2: get the most similar faces from the query folder"
+save_similar_faces_by_query(OUTPUT_DIR, REQUEST_IMAGES_DIR, 20)

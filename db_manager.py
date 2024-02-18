@@ -29,7 +29,11 @@ class DatabaseConnection:
         return answers
 
     def insert_anwers_from_queries(self, limit):
-        "Agregar las limit respuestas asociadas a cada consulta"
+        """
+        Iterate over the queries table and get the most similar faces asociated
+        to every query and insert it into a response table. The number of similar
+        faces that are stored is based on the "limit" number
+        """
         self.cursor.callproc("Insert_top_similars", (limit,))
 
     def get_similars(self):
