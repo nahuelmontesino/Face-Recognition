@@ -1,28 +1,22 @@
 import numpy as np
 import os
-import tensorflow as tf
 import cv2
 from retinaface import RetinaFace
 
 target_shape = (224, 224)
 
 
-def preprocess_image(filename):
-    """
-    Load the specified file as a JPEG image, preprocess it and
-    resize it to the target shape.
-    """
-    try:
-        image_string = tf.io.read_file(filename)
-        image = tf.image.decode_jpeg(image_string, channels=3)
-        image = tf.image.convert_image_dtype(image, tf.float32)
-        image = tf.image.resize(image, target_shape)
-        return image
-    except:
-        print(f'La imagen no se pudo preprocesar {filename}')
-
-
 def preprocess_image_opencv(image, target_shape):
+    """
+    Preprocesses an image using OpenCV for TensorFlow.
+
+    Args:
+        image (numpy.ndarray): The input image in BGR format (OpenCV).
+        target_shape (tuple): A tuple specifying the desired shape (height, width) of the output image.
+
+    Returns:
+        numpy.ndarray: The preprocessed image, resized to the desired shape and normalized to have pixel values in the range [0, 1].
+    """
     # convert the image from BGR (OpenCV) to RGB (TensorFlow)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -39,22 +33,39 @@ def preprocess_image_opencv(image, target_shape):
 
 
 def get_vector(face_image, model):
-    embedding = []
+    """Get the image features extracted with a TensorFlow model.
 
+    Args:
+        face_image: An image of a face.
+        model: A TensorFlow model used for feature extraction.
+
+    Returns:
+        numpy.ndarray: An array representing the extracted features.
+    """
     open_cv_image = preprocess_image_opencv(face_image, target_shape)
-    # need to expand it to (1, 3, 200, 200) as it's expecting a list
+    # need to expand it to (1, 3, 200, 200) as it's expecting a batch
     x = np.expand_dims(open_cv_image, axis=0)
     # extract the features
-    embedding.append(model(x, training=False)[0])
+    embedding = model(x, training=False)[0]
+    # convert the tensor into numpy array
+    numpy_array = np.array(embedding)
 
-    return embedding
+    return numpy_array
 
 
 def detect_faces(image):
     """
-    Make faces detection and return a list of boxes sort by face score
-    Parameters:
-        - image: the loaded image
+    Detects faces in an image using RetinaFace model and returns the coordinates of the facial areas.
+
+    Args:
+        image (numpy.ndarray): The input image containing one or more faces.
+
+    Returns:
+        list of tuples: A list containing tuples representing the coordinates of the facial areas detected in the image.
+                        Each tuple contains four values: (x1, y1, x2, y2), where (x1, y1) represents the top-left corner
+                        and (x2, y2) represents the bottom-right corner of the facial area bounding box.
+
+        If no faces are detected or the detected faces are not in the expected format, an empty list is returned.
     """
     face_cords = []
     faces = RetinaFace.detect_faces(image)
@@ -69,15 +80,28 @@ def detect_faces(image):
 
 
 def get_face_crop(dir_path, image_name):
+    """
+    Extracts and crops the detected face from an image.
+
+    Args:
+        dir_path (str): The directory path where the image is located.
+        image_name (str): The name of the image file.
+
+    Returns:
+        numpy.ndarray: A cropped image containing the detected face.
+    """
     # read the image
     image = cv2.imread(os.path.join(dir_path, image_name))
 
     faces = detect_faces(image)
 
-    # it must be just one face
-    for (x1, y1, x2, y2) in faces:
-        # ccrop the image from the cordinate
-        roi_crop = image[y1 - 20: y2 + 20, x1 - 20: x2 + 20]
-        cv2.imwrite(os.path.join("imagenes/rostros_images", image_name), roi_crop)
+    if len(faces) > 0:
+        # it must be just one face
+        for (x1, y1, x2, y2) in faces:
+            # ccrop the image from the cordinate
+            roi_crop = image[y1 - 20: y2 + 20, x1 - 20: x2 + 20]
+            cv2.imwrite(os.path.join("imagenes/rostros_images", image_name), roi_crop)
 
-        return roi_crop
+            return roi_crop
+    else:
+        print("There is no face in the image", image_name)
