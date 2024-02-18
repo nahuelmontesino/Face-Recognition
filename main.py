@@ -1,8 +1,7 @@
 import cv2
 import os
-import numpy as np
 import db_manager as dbm
-from rostros_utils import get_face_crop, get_vector
+from face_utils import get_face_crop, get_vector
 import tensorflow as tf
 from pathlib import Path
 from dotenv import load_dotenv

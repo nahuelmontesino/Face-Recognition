@@ -70,7 +70,6 @@ def detect_faces(image):
     face_cords = []
     faces = RetinaFace.detect_faces(image)
 
-    print(faces is None)
     if len(faces) == 0 or not isinstance(faces, dict):
         return []
 
@@ -96,8 +95,6 @@ def get_face_crop(dir_path, image_name):
 
     faces = detect_faces(image)
 
-    print()
-
     if len(faces) > 0:
         # it must be just one face
         for (x1, y1, x2, y2) in faces:
@@ -107,7 +104,6 @@ def get_face_crop(dir_path, image_name):
             x1 = x1 - 20 if x1 - 20 > 0 else x1
             x2 = x2 + 20 if x2 + 20 < image.shape[0] else x2
             roi_crop = image[y1: y2, x1: x2]
-            print(roi_crop)
             cv2.imwrite(os.path.join("imagenes/rostros_images", image_name), roi_crop)
 
             return roi_crop
