@@ -1,19 +1,20 @@
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
-import Rostros_utils as utils
+import face_utils as utils
 import numpy as np
 import os
 
 datagen = ImageDataGenerator(
-    rescale = 1./255,     #Establece el valor de los pixeles en un rando de (0 a 1)
-	rotation_range=40,
+    rescale=1./255,     # Establece el valor de los pixeles en un rando de (0 a 1)
+    rotation_range=40,
     width_shift_range=0.2,
-    height_shift_range=0.2,      
-    shear_range=0.3,  #Inclina las imagenes
-    zoom_range=0.2,  #Hace zoom a las imagenes
-    brightness_range = [0.7,1.3],       
-    horizontal_flip=True, #Invierte las imagenes
+    height_shift_range=0.2,
+    shear_range=0.3,  # Inclina las imagenes
+    zoom_range=0.2,  # Hace zoom a las imagenes
+    brightness_range=[0.7, 1.3],
+    horizontal_flip=True,  # Invierte las imagenes
     fill_mode='nearest')
+
 
 class DataAumentation:
     def __init__(self):
@@ -21,7 +22,7 @@ class DataAumentation:
 
     def generete_aumented_images(self, input_directory, output_directory, total_images):
         my_images = os.listdir(input_directory)
-        for i, image_name in enumerate(my_images):  
+        for i, image_name in enumerate(my_images):
             try:  
                 path = os.path.join(input_directory, image_name)    
                 preprocess_img = utils.preprocess_image(path)  
@@ -41,6 +42,3 @@ class DataAumentation:
             for e in range(total_images):
                 img_gen.next()
     
-
-
-

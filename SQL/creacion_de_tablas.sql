@@ -1,9 +1,9 @@
-   CREATE TABLE imagen(
-   id SERIAL,
-   nombre VARCHAR(100),
-   vector float[],
-	
-   PRIMARY KEY(id));
+CREATE TABLE imagen(
+id SERIAL,
+nombre VARCHAR(100),
+vector float[],
+
+PRIMARY KEY(id));
 
 CREATE TABLE consulta(
    id SERIAL,
