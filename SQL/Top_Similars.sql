@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION TopSimilars(vector_entrada float[], limite int) 
---Obtiene las (limite) vectores mas cercanos, junto con el id de la imagen
+--Obtiene los (limite) vectores mas cercanos, junto con el id de la imagen
 RETURNS table (
 	id int,
 	name varchar,

@@ -19,19 +19,15 @@ OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 target_shape = (224, 224)
 
 
-def load_images_into_database(dir_path, model, is_consulta=False):
+def load_images_into_database(dir_path, model, is_query=False):
     """
-    Se guarda el nombre y el vector asociados a 
-    una imagen en la base de datos, a partir de un direcorio dado.
+    Loads images from a given directory into a database. The image name
+    and the feature vector are stored
 
-    Parameters
-    ----------
-    dir_path : directorio desde donde se obtienen las imagenes.
-    model: modelo para obtener los vectores a partir de la imagenes.
-    is_consulta: bool, optional
-        especifica si las imagenes a cargar son para consulta, 
-        caso contrario se agregan a la tabla imagen
-    --------
+    Args:
+        dir_path (str): Path to the directory containing the images to load.
+        model: Model used to extract features from the images.
+        is_query (bool, optional): Indicates if the images are for querying. Default is False.
     """
     # connect with database
     database = dbm.DatabaseConnection()
@@ -44,19 +40,19 @@ def load_images_into_database(dir_path, model, is_consulta=False):
             # .tolist() allow to save into the database
             image = embedding.tolist()
             # insert the image features into the database
-            database.insert_new_image((image_name, image), is_consulta)
+            database.insert_new_image((image_name, image), is_query)
         except Exception as e:
             print("Ocurrió una excepción:", e)
 
 
 def load_anwers_from_queries(limit):
     """
-    Recorre la tabla consultas y obtiene las respuestas asociadas a 
-    cada una de ellas y las inserta en la tabla respuesta
-    Parameters
-    ----------
-    limit: numero de respuestas por consulta.
-    --------
+    Iterate over the queries table and get the most similar faces asociated
+    to every query and insert it into a response table. The number of similar
+    faces that are stored is based on the "limit" number
+
+    Args:
+        limit: answer number for every query
     """
     database = dbm.DatabaseConnection()
     database.insert_anwers_from_queries(limit)
@@ -64,9 +60,8 @@ def load_anwers_from_queries(limit):
 
 def save_similar_faces(folder_to_save):
     """
-     Obtiene respuestas de la tabla respuesta de la base de datos
-     y guarda una carpeta por consulta, en dicha carpeta estara la imagen
-     base y sus N similares
+    Get responses from the database response table and saves a 
+    folder per query, in this folder will be the base image and its similar N
     """
     i = 0
     database = dbm.DatabaseConnection()
@@ -97,11 +92,11 @@ def save_similar_faces(folder_to_save):
         myfile.close()
 
 
-"Paso 1: Cargar las imagenes en la tabla imagenes"
+"Step 1: load the images into the images table"
 load_images_into_database(MAIN_IMAGES_DIR, model)
-"Paso 2: cargar las consultas en la tabla consulta"
+"Step 2: cload the queries into the query table"
 load_images_into_database(REQUEST_IMAGES_DIR, model, True)
-"Paso 3: Obtener las respuestas asociadas a cada consulta y guardarlas en la tabla respuesta"
+"Step 3: get the answers related to every query and save it in the response table"
 load_anwers_from_queries(20)
-"Paso 4: Guardar en una carpeta las imagenes de las consultas y sus respuestas similares"
+"Step 4: save in the output folder the images from the queries and their answers"
 save_similar_faces(OUTPUT_DIR)
