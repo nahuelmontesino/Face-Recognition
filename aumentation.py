@@ -1,6 +1,6 @@
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
-import rostros_utils as utils
+import face_utils as utils
 import numpy as np
 import os
 
